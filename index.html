@@ -79,8 +79,18 @@ textarea{height:84px;resize:none;font-size:15px;background:var(--bg);color:var(-
 progress{width:100%;height:5px;margin-top:8px;accent-color:var(--accent)}
 #timerDisplay,#swDisplay{font-size:clamp(26px,4.4vw,50px)}
 .tools .wwrap{width:52px}
-.tools .row{gap:6px;flex-wrap:nowrap}
-.tools .btn{padding:8px 10px;font-size:13px}
+.tools .row{gap:4px;flex-wrap:nowrap}
+.tools .btn{padding:8px clamp(6px,1vw,14px);font-size:clamp(12px,1.2vw,13px);white-space:nowrap}
+/* shorter viewports (e.g. iPad mini in Safari with toolbars): compact the timer card */
+@media (max-height:720px) and (min-aspect-ratio:1/1){
+  section{padding:10px 14px}
+  .setter .lbl{display:none}
+  .presets{flex-wrap:nowrap;gap:4px;margin-top:4px}
+  .presets button{padding:2px 6px;font-size:12px;white-space:nowrap}
+  progress{margin-top:6px}
+  section .row{margin-top:6px}
+  .tools .btn{padding-top:6px;padding-bottom:6px}
+}
 section .row{margin-top:10px}
 section .btn{padding:8px 20px;font-size:14px}
 .laps{list-style:none;padding:0;margin:8px 0 0;flex:1;min-height:0;overflow:auto;font-variant-numeric:tabular-nums}
