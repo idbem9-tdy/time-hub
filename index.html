@@ -21,11 +21,11 @@ html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Segoe UI",sans-serif;padding:12px;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation;-webkit-text-size-adjust:100%}
 textarea,input{-webkit-user-select:text;user-select:text}
 /* iPad Air (4th gen) landscape = 1180x820 pt: left column = clock (top) + timer/stopwatch (bottom), right half = calendar */
-.app{height:100%;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.app{height:100%;width:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:12px}
 #clock{grid-column:1;grid-row:1}
 #calendar{grid-column:2;grid-row:1/3}
-.tools{grid-column:1;grid-row:2;display:grid;grid-template-columns:1fr 1fr;gap:12px;min-height:0;min-width:0}
-section{display:flex;flex-direction:column;min-height:0;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 18px;overflow:hidden}
+.tools{grid-column:1;grid-row:2;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;min-height:0;min-width:0}
+section{display:flex;flex-direction:column;min-height:0;min-width:0;max-width:100%;box-sizing:border-box;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 18px;overflow:hidden}
 section>h3{margin:0 0 6px;font-size:12px;font-weight:600;color:var(--sub);letter-spacing:.08em}
 @media (max-width:760px),(max-aspect-ratio:1/1){
   body{overflow:auto}
@@ -42,8 +42,8 @@ button.btn.danger{background:var(--danger)}
 .row{display:flex;justify-content:center;margin-top:20px;flex-wrap:wrap}
 .row>*{margin:4px 6px}
 /* clock */
-.clock-body{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
-#clockTime{font-size:9vw;font-size:clamp(48px,9vw,112px);line-height:1.1}
+.clock-body{min-width:0;flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
+#clockTime{white-space:nowrap;font-size:8vw;font-size:clamp(48px,9vw,112px);line-height:1.1}
 #clockDate{font-size:2.2vw;font-size:clamp(16px,2.2vw,26px);margin-top:6px}
 select{background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-family:inherit}
 /* calendar */
@@ -51,14 +51,14 @@ select{background:var(--bg);color:var(--fg);border:1px solid var(--line);border-
 .cal-head h2{margin:0;font-size:28px;font-weight:600}
 .ym select{font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:2px 6px;cursor:pointer}
 .cal-head button{border:0;background:var(--bg);color:var(--fg);width:44px;height:44px;border-radius:50%;font-size:16px;cursor:pointer}
-.grid{display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:auto repeat(6,minmax(0,1fr));gap:6px;text-align:center;flex:1;min-height:0}
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));width:100%;grid-template-rows:auto repeat(6,minmax(0,1fr));gap:6px;text-align:center;flex:1;min-height:0}
 .grid .dow{font-size:15px;color:var(--sub);padding:4px 0}
-.grid .d{min-height:0;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;cursor:pointer;border:0;background:none;color:var(--fg);font-family:inherit}
+.grid .d{min-width:0;width:100%;margin:0;padding:0;box-sizing:border-box;-webkit-appearance:none;appearance:none;min-height:0;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;cursor:pointer;border:0;background:none;color:var(--fg);font-family:inherit}
 .grid .d.other{color:var(--sub);opacity:.4}
 .grid .d.sun{color:var(--danger)}
 .grid .d.sat{color:var(--accent)}
 .grid .d.today{background:var(--today);color:#fff}
-.grid .d.sel:not(.today){outline:2px solid var(--accent)}
+.grid .d.sel:not(.today){outline:0;box-shadow:inset 0 0 0 2px var(--accent)}
 #calInfo{margin-top:10px;font-size:15px;display:flex;flex-direction:column}
 #calInfo>*+*{margin-top:6px}
 #calInfo .sub{text-align:left;font-weight:600}
@@ -80,6 +80,10 @@ textarea{height:84px;resize:none;font-size:15px;background:var(--bg);color:var(-
 .presets button{margin:3px}
 .presets button{border:1px solid var(--line);background:none;color:var(--fg);border-radius:999px;padding:3px 12px;cursor:pointer;font-family:inherit;font-size:13px}
 progress{width:100%;height:5px;margin-top:8px;accent-color:var(--accent)}
+progress{-webkit-appearance:none;appearance:none;border:0;border-radius:3px;background:var(--line);overflow:hidden}
+progress::-webkit-progress-bar{background:var(--line);border-radius:3px}
+progress::-webkit-progress-value{background:var(--accent);border-radius:3px}
+progress::-moz-progress-bar{background:var(--accent)}
 #timerDisplay,#swDisplay{font-size:4.4vw;font-size:clamp(26px,4.4vw,50px)}
 .tools .wwrap{width:52px}
 .tools .row{flex-wrap:nowrap}
