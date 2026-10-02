@@ -18,7 +18,7 @@
 @media (prefers-color-scheme:dark){:root{--bg:#0f1115;--card:#1a1d24;--fg:#eceef2;--sub:#9aa1ad;--line:#2a2e38;--accent:#6c8cff}}
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Segoe UI",sans-serif;padding:12px;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Segoe UI",sans-serif;padding:12px;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation;-webkit-text-size-adjust:100%}
 textarea,input{-webkit-user-select:text;user-select:text}
 /* iPad Air (4th gen) landscape = 1180x820 pt: left column = clock (top) + timer/stopwatch (bottom), right half = calendar */
 .app{height:100%;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:12px}
@@ -39,11 +39,12 @@ section>h3{margin:0 0 6px;font-size:12px;font-weight:600;color:var(--sub);letter
 button.btn{border:0;border-radius:999px;padding:12px 24px;font-size:15px;cursor:pointer;background:var(--accent);color:var(--accent-fg);font-family:inherit}
 button.btn.ghost{background:var(--line);color:var(--fg)}
 button.btn.danger{background:var(--danger)}
-.row{display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.row{display:flex;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.row>*{margin:4px 6px}
 /* clock */
 .clock-body{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
-#clockTime{font-size:clamp(48px,9vw,112px);line-height:1.1}
-#clockDate{font-size:clamp(16px,2.2vw,26px);margin-top:6px}
+#clockTime{font-size:9vw;font-size:clamp(48px,9vw,112px);line-height:1.1}
+#clockDate{font-size:2.2vw;font-size:clamp(16px,2.2vw,26px);margin-top:6px}
 select{background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-family:inherit}
 /* calendar */
 .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
@@ -58,14 +59,15 @@ select{background:var(--bg);color:var(--fg);border:1px solid var(--line);border-
 .grid .d.sat{color:var(--accent)}
 .grid .d.today{background:var(--today);color:#fff}
 .grid .d.sel:not(.today){outline:2px solid var(--accent)}
-#calInfo{margin-top:10px;font-size:15px;display:flex;flex-direction:column;gap:6px}
+#calInfo{margin-top:10px;font-size:15px;display:flex;flex-direction:column}
+#calInfo>*+*{margin-top:6px}
 #calInfo .sub{text-align:left;font-weight:600}
 textarea{height:84px;resize:none;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:8px;font-family:inherit;resize:vertical}
 /* timer */
-.setter{display:flex;justify-content:center;align-items:flex-end;gap:10px;margin:4px 0;transition:opacity .2s}
+.setter{display:flex;justify-content:center;align-items:flex-end;margin:4px 0;transition:opacity .2s}
 .setter.locked{opacity:.4;pointer-events:none}
-.setter .col{display:flex;flex-direction:column;align-items:center;gap:2px}
-.setter .lbl{font-size:12px;color:var(--sub)}
+.setter .col{display:flex;flex-direction:column;align-items:center;margin:0 5px}
+.setter .lbl{font-size:12px;color:var(--sub);margin-bottom:2px}
 .wwrap{position:relative;width:64px;height:102px}
 .wwrap::after{content:"";position:absolute;left:0;right:0;top:34px;height:34px;background:var(--accent);opacity:.12;border-radius:10px;pointer-events:none}
 .wheel{height:100%;overflow-y:scroll;scroll-snap-type:y mandatory;padding:34px 0;scrollbar-width:none;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
@@ -74,19 +76,22 @@ textarea{height:84px;resize:none;font-size:15px;background:var(--bg);color:var(-
 .wi{height:34px;line-height:34px;text-align:center;scroll-snap-align:center;scroll-snap-stop:always;font-size:18px;color:var(--sub);font-variant-numeric:tabular-nums;cursor:pointer}
 .wedit{position:absolute;left:0;top:34px;width:100%;height:34px;padding:0;box-sizing:border-box;text-align:center;font-size:22px;font-weight:600;font-family:inherit;background:var(--card);color:var(--fg);border:2px solid var(--accent);border-radius:10px;outline:none;-webkit-user-select:text;user-select:text}
 .wi.sel{color:var(--fg);font-weight:600;font-size:22px}
-.presets{display:flex;gap:6px;justify-content:center;margin-top:6px;flex-wrap:wrap}
+.presets{display:flex;justify-content:center;margin-top:6px;flex-wrap:wrap}
+.presets button{margin:3px}
 .presets button{border:1px solid var(--line);background:none;color:var(--fg);border-radius:999px;padding:3px 12px;cursor:pointer;font-family:inherit;font-size:13px}
 progress{width:100%;height:5px;margin-top:8px;accent-color:var(--accent)}
-#timerDisplay,#swDisplay{font-size:clamp(26px,4.4vw,50px)}
+#timerDisplay,#swDisplay{font-size:4.4vw;font-size:clamp(26px,4.4vw,50px)}
 .tools .wwrap{width:52px}
-.tools .row{gap:4px;flex-wrap:nowrap}
-.tools .btn{padding:8px clamp(6px,1vw,14px);font-size:clamp(12px,1.2vw,13px);white-space:nowrap}
+.tools .row{flex-wrap:nowrap}
+.tools .row{margin-top:6px}
+.tools .row>*{margin:0 2px}
+.tools .btn{padding:8px 10px;padding:8px clamp(6px,1vw,14px);font-size:12px;font-size:clamp(12px,1.2vw,13px);white-space:nowrap}
 /* shorter viewports (e.g. iPad mini in Safari with toolbars): compact the timer card */
 @media (max-height:720px) and (min-aspect-ratio:1/1){
   section{padding:10px 14px}
   .setter .lbl{display:none}
-  .presets{flex-wrap:nowrap;gap:4px;margin-top:4px}
-  .presets button{padding:2px 6px;font-size:12px;white-space:nowrap}
+  .presets{flex-wrap:nowrap;margin-top:4px}
+  .presets button{margin:0 2px;padding:2px 6px;font-size:12px;white-space:nowrap}
   progress{margin-top:6px}
   section .row{margin-top:6px}
   .tools .btn{padding-top:6px;padding-bottom:6px}
@@ -96,7 +101,7 @@ section .btn{padding:8px 20px;font-size:14px}
 .laps{list-style:none;padding:0;margin:8px 0 0;flex:1;min-height:0;overflow:auto;font-variant-numeric:tabular-nums}
 .laps li{display:flex;justify-content:space-between;padding:4px 4px;border-top:1px solid var(--line);font-size:13px}
 .laps li.best{color:#2f9e5f}.laps li.worst{color:var(--danger)}
-#timerDone{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;font-size:clamp(40px,7vw,84px);font-weight:700;color:var(--danger);animation:blink .7s steps(1) infinite}
+#timerDone{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;font-size:7vw;font-size:clamp(40px,7vw,84px);font-weight:700;color:var(--danger);animation:blink .7s steps(1) infinite}
 #timerDone[hidden]{display:none}
 @keyframes blink{50%{opacity:0}}
 </style>
@@ -164,8 +169,8 @@ section .btn{padding:8px 20px;font-size:14px}
 const $ = s => document.querySelector(s);
 const pad = (n, l = 2) => String(n).padStart(l, "0");
 const store = {
-  get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d } catch { return d } },
-  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)) } catch {} }
+  get(k, d) { try { const v = JSON.parse(localStorage.getItem(k)); return v === null || v === undefined ? d : v } catch (e) { return d } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)) } catch (e) {} }
 };
 
 /* ---- clock ---- */
@@ -175,10 +180,11 @@ $("#tz").value = store.get("tz", "local");
 $("#tz").onchange = () => { store.set("tz", $("#tz").value); drawClock(); };
 
 function zoned(tz) {
-  const opts = { hourCycle: "h23", year: "numeric", month: "numeric", day: "numeric", weekday: "short", hour: "numeric", minute: "numeric", second: "numeric" };
+  const opts = { hour12: false, year: "numeric", month: "numeric", day: "numeric", weekday: "short", hour: "numeric", minute: "numeric", second: "numeric" };
   if (tz !== "local") opts.timeZone = tz;
-  const p = Object.fromEntries(new Intl.DateTimeFormat("ja-JP", opts).formatToParts(new Date()).map(x => [x.type, x.value]));
-  return { h: +p.hour, m: +p.minute, s: +p.second, label: `${p.year}年${p.month}月${p.day}日(${p.weekday})` };
+  const p = {};
+  new Intl.DateTimeFormat("ja-JP", opts).formatToParts(new Date()).forEach(x => { p[x.type] = x.value; });
+  return { h: (+p.hour) % 24, m: +p.minute, s: +p.second, label: `${p.year}年${p.month}月${p.day}日(${p.weekday})` };
 }
 function drawClock() {
   const t = zoned($("#tz").value);
@@ -237,11 +243,17 @@ function makeWheel(el, max) {
   const mark = () => { const v = el.get(); [...items].forEach((it, i) => it.classList.toggle("sel", i === v)); };
   el.get = () => Math.min(max, Math.max(0, Math.round(el.scrollTop / WH)));
   el.set = v => { el.scrollTop = v * WH; mark(); };
-  el.addEventListener("scroll", () => { mark(); el.dispatchEvent(new Event("input")); }, { passive: true });
+  let snapTimer = 0;
+  el.addEventListener("scroll", () => {
+    mark(); el.dispatchEvent(new Event("input"));
+    // fallback for engines without CSS scroll-snap (older iPadOS): settle on the nearest row
+    clearTimeout(snapTimer);
+    snapTimer = setTimeout(() => { const t = el.get() * WH; if (Math.abs(el.scrollTop - t) > 1) el.scrollTop = t; }, 150);
+  }, { passive: true });
   // tap the selected value to type a number; tap any other value to scroll to it
   const edit = () => {
     const box = document.createElement("input");
-    box.className = "wedit"; box.type = "text"; box.inputMode = "numeric"; box.maxLength = 2; box.value = el.get();
+    box.className = "wedit"; box.type = "tel"; box.setAttribute("inputmode", "numeric"); box.maxLength = 2; box.value = el.get();
     let done = false;
     const finish = ok => {
       if (done) return; done = true;
@@ -254,7 +266,11 @@ function makeWheel(el, max) {
     box.onblur = () => finish(true);
     el.parentElement.appendChild(box); box.focus(); box.select();
   };
-  [...items].forEach((it, i) => it.onclick = () => i === el.get() ? edit() : el.scrollTo({ top: i * WH, behavior: "smooth" }));
+  [...items].forEach((it, i) => it.onclick = () => {
+    if (i === el.get()) edit();
+    else if (el.scrollTo) el.scrollTo({ top: i * WH, behavior: "smooth" });
+    else el.scrollTop = i * WH; // Safari 12 has no Element.scrollTo
+  });
   el.set(0);
 }
 makeWheel($("#th"), 12); makeWheel($("#tm"), 59); makeWheel($("#ts"), 59);
@@ -267,11 +283,18 @@ function showTimer() {
   $("#prog").value = tTotal ? 1 - tLeft / tTotal : 0;
   document.title = tRun ? `${fmtHMS(tLeft)} - Time Hub` : "Time Hub";
 }
+let audioCtx = null;
+function unlockAudio() { // iOS only allows audio after a user gesture, so create/resume the context on Start
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+  } catch (e) {}
+}
 function beep() {
   try {
-    const ac = new (window.AudioContext || window.webkitAudioContext)();
+    const ac = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
     [0, .3, .6].forEach(o => { const os = ac.createOscillator(), gn = ac.createGain(); os.frequency.value = 880; os.connect(gn); gn.connect(ac.destination); gn.gain.setValueAtTime(.2, ac.currentTime + o); gn.gain.exponentialRampToValueAtTime(.001, ac.currentTime + o + .25); os.start(ac.currentTime + o); os.stop(ac.currentTime + o + .25); });
-  } catch {}
+  } catch (e) {}
 }
 function tTick() {
   tLeft = Math.max(0, tEnd - Date.now()); showTimer();
@@ -281,6 +304,7 @@ function tTick() {
   tRaf = requestAnimationFrame(tTick);
 }
 $("#tStart").onclick = () => {
+  unlockAudio();
   $("#timerDone").hidden = true;
   if (tRun) { tRun = false; cancelAnimationFrame(tRaf); $("#tStart").textContent = "再開"; return; }
   if (tLeft <= 0 || $("#tStart").textContent === "スタート") { tTotal = tLeft = (tLeft > 0 && tLeft !== tTotal) ? tLeft : readSetter(); }
@@ -313,7 +337,7 @@ $("#swReset").onclick = () => { swRun = false; cancelAnimationFrame(swRaf); swBa
 /* ---- keep screen on (time display) + offline support ---- */
 let wakeLock = null;
 async function keepAwake() {
-  try { if ("wakeLock" in navigator && document.visibilityState === "visible") wakeLock = await navigator.wakeLock.request("screen"); } catch {}
+  try { if ("wakeLock" in navigator && document.visibilityState === "visible") wakeLock = await navigator.wakeLock.request("screen"); } catch (e) {}
 }
 document.addEventListener("visibilitychange", keepAwake);
 document.addEventListener("pointerdown", () => { if (!wakeLock || wakeLock.released) keepAwake(); });
