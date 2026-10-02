@@ -48,6 +48,7 @@ select{background:var(--bg);color:var(--fg);border:1px solid var(--line);border-
 /* calendar */
 .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .cal-head h2{margin:0;font-size:28px;font-weight:600}
+.ym select{font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:2px 6px;cursor:pointer}
 .cal-head button{border:0;background:var(--bg);color:var(--fg);width:44px;height:44px;border-radius:50%;font-size:16px;cursor:pointer}
 .grid{display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:auto repeat(6,minmax(0,1fr));gap:6px;text-align:center;flex:1;min-height:0}
 .grid .dow{font-size:15px;color:var(--sub);padding:4px 0}
@@ -104,7 +105,7 @@ section .btn{padding:8px 20px;font-size:14px}
   <section id="calendar">
     <div class="cal-head">
       <button id="prev" aria-label="前の月">◀</button>
-      <h2 id="calTitle"></h2>
+      <h2 class="ym"><select id="calYear" aria-label="年"></select>年 <select id="calMonth" aria-label="月"></select>月</h2>
       <span><button id="todayBtn" style="width:auto;border-radius:999px;padding:0 12px;margin-right:6px">今日</button><button id="next" aria-label="次の月">▶</button></span>
     </div>
     <div class="grid" id="calGrid"></div>
@@ -185,7 +186,8 @@ const key = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())
 const DOW = ["日", "月", "火", "水", "木", "金", "土"];
 
 function drawCal() {
-  $("#calTitle").textContent = `${view.getFullYear()}年${view.getMonth() + 1}月`;
+  $("#calYear").value = view.getFullYear();
+  $("#calMonth").value = view.getMonth();
   const g = $("#calGrid"); g.innerHTML = DOW.map((d, i) => `<div class="dow" style="color:${i == 0 ? "var(--danger)" : i == 6 ? "var(--accent)" : ""}">${d}</div>`).join("");
   const start = new Date(view); start.setDate(1 - view.getDay());
   const today = key(new Date());
@@ -200,6 +202,9 @@ function drawCal() {
   $("#selLabel").textContent = `${sel.getFullYear()}年${sel.getMonth() + 1}月${sel.getDate()}日(${DOW[sel.getDay()]})`;
   $("#memo").value = memos[key(sel)] || "";
 }
+$("#calYear").innerHTML = Array.from({ length: 201 }, (_, i) => `<option value="${1900 + i}">${1900 + i}</option>`).join("");
+$("#calMonth").innerHTML = Array.from({ length: 12 }, (_, i) => `<option value="${i}">${i + 1}</option>`).join("");
+$("#calYear").onchange = $("#calMonth").onchange = () => { view = new Date(+$("#calYear").value, +$("#calMonth").value, 1); drawCal(); };
 $("#prev").onclick = () => { view = new Date(view.getFullYear(), view.getMonth() - 1, 1); drawCal(); };
 $("#next").onclick = () => { view = new Date(view.getFullYear(), view.getMonth() + 1, 1); drawCal(); };
 $("#todayBtn").onclick = () => { const n = new Date(); sel = new Date(n.getFullYear(), n.getMonth(), n.getDate()); view = new Date(n.getFullYear(), n.getMonth(), 1); drawCal(); };
