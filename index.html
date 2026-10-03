@@ -292,6 +292,23 @@ $("#memo").oninput = e => {
 $("#memo").onchange = drawCal;
 drawCal();
 
+/* roll the calendar over at midnight (also catches up after the iPad wakes from sleep) */
+let lastDay = key(new Date());
+function checkNewDay() {
+  const now = new Date(), k = key(now);
+  if (k === lastDay) return;
+  const followToday = key(sel) === lastDay && document.activeElement !== $("#memo"); // don't yank a memo being edited
+  lastDay = k;
+  if (followToday) {
+    sel = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    view = new Date(now.getFullYear(), now.getMonth(), 1);
+  }
+  drawCal(); // refreshes the "today" highlight even if the user was browsing another month
+}
+setInterval(checkNewDay, 1000);
+document.addEventListener("visibilitychange", checkNewDay);
+window.addEventListener("pageshow", checkNewDay);
+
 /* ---- timer ---- */
 let tTotal = 300000, tEnd = 0, tLeft = 300000, tRun = false, tRaf = 0;
 const fmtHMS = ms => { const s = Math.ceil(ms / 1000); return `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}`; };
