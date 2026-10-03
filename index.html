@@ -110,6 +110,9 @@ section .btn{padding:8px 20px;font-size:14px}
 .laps li.best{color:#2f9e5f}.laps li.worst{color:var(--danger)}
 #timerDone{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;font-size:7vw;font-size:clamp(40px,7vw,84px);font-weight:700;color:var(--danger);animation:blink .7s steps(1) infinite}
 #timerDone[hidden]{display:none}
+#timerDone{pointer-events:none;overflow:hidden}
+/* while "終了" is shown it takes the place of the pickers/presets, so it always has room and never covers the buttons */
+#timer.done .setter,#timer.done .presets{display:none}
 @keyframes blink{50%{opacity:0}}
 </style>
 </head>
@@ -360,6 +363,13 @@ function showTimer() {
   $("#prog").value = tTotal ? 1 - tLeft / tTotal : 0;
   document.title = tRun ? `${fmtHMS(tLeft)} - Time Hub` : "Time Hub";
 }
+let doneSaved = null; // hidden (display:none) scroll containers lose their scroll offset, so remember the picked time
+function setDone(on) {
+  if (on && doneSaved === null) doneSaved = readSetter();
+  $("#timerDone").hidden = !on;
+  $("#timer").classList.toggle("done", on);
+  if (!on && doneSaved !== null) { writeSetter(doneSaved); doneSaved = null; }
+}
 let audioCtx = null;
 function unlockAudio() { // iOS only allows audio after a user gesture, so create/resume the context on Start
   try {
@@ -375,21 +385,21 @@ function beep() {
 }
 function tTick() {
   tLeft = Math.max(0, tEnd - Date.now()); showTimer();
-  if (tLeft <= 0) { tRun = false; $("#tStart").textContent = "スタート"; $("#timerDone").hidden = false; beep();
+  if (tLeft <= 0) { tRun = false; $("#tStart").textContent = "スタート"; setDone(true); beep();
     if ("Notification" in window && Notification.permission === "granted") new Notification("タイマー終了");
     showTimer(); return; }
   tRaf = requestAnimationFrame(tTick);
 }
 $("#tStart").onclick = () => {
   unlockAudio();
-  $("#timerDone").hidden = true;
+  setDone(false);
   if (tRun) { tRun = false; cancelAnimationFrame(tRaf); $("#tStart").textContent = "再開"; return; }
   if (tLeft <= 0 || $("#tStart").textContent === "スタート") { tTotal = tLeft = (tLeft > 0 && tLeft !== tTotal) ? tLeft : readSetter(); }
   if (tLeft <= 0) return;
   if ("Notification" in window && Notification.permission === "default") Notification.requestPermission();
   tEnd = Date.now() + tLeft; tRun = true; $("#tStart").textContent = "一時停止"; tTick();
 };
-$("#tReset").onclick = () => { tRun = false; cancelAnimationFrame(tRaf); $("#timerDone").hidden = true; tTotal = tLeft = readSetter(); $("#tStart").textContent = "スタート"; showTimer(); };
+$("#tReset").onclick = () => { tRun = false; cancelAnimationFrame(tRaf); setDone(false); tTotal = tLeft = readSetter(); $("#tStart").textContent = "スタート"; showTimer(); };
 ["#th", "#tm", "#ts"].forEach(s => $(s).oninput = () => { if (!tRun) { tTotal = tLeft = readSetter(); $("#tStart").textContent = "スタート"; showTimer(); } });
 document.querySelectorAll(".presets button").forEach(b => b.onclick = () => { writeSetter(b.dataset.s * 1000); $("#tReset").click(); });
 showTimer();
