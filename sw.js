@@ -1,4 +1,4 @@
-const CACHE = "timehub-v1";
+const CACHE = "timehub-v2";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/apple-touch-icon.png"];
 
 self.addEventListener("install", e => {
@@ -12,14 +12,18 @@ self.addEventListener("activate", e => {
   );
 });
 
-// Network-first so edits show up when online; fall back to cache offline.
+// Network-first; offline falls back to the cache. Only plain same-origin 200 responses are cached
+// (no redirects, no range/partial responses), and cache write failures are swallowed.
 self.addEventListener("fetch", e => {
-  if (e.request.method !== "GET") return;
+  const req = e.request;
+  if (req.method !== "GET" || new URL(req.url).origin !== self.location.origin || req.headers.has("range")) return;
   e.respondWith(
-    fetch(e.request).then(res => {
-      const copy = res.clone();
-      caches.open(CACHE).then(c => c.put(e.request, copy));
+    fetch(req).then(res => {
+      if (res.ok && res.type === "basic" && !res.redirected) {
+        const copy = res.clone();
+        caches.open(CACHE).then(c => c.put(req, copy)).catch(() => {});
+      }
       return res;
-    }).catch(() => caches.match(e.request).then(r => r || caches.match("./index.html")))
+    }).catch(() => caches.match(req).then(r => r || caches.match("./index.html")))
   );
 });
