@@ -57,9 +57,6 @@ select{background:var(--bg);color:var(--fg);border:1px solid var(--line);border-
 .grid .d.other{color:var(--sub);opacity:.4}
 .grid .d.sun{color:var(--danger)}
 .grid .d.sat{color:var(--accent)}
-.grid .d.hol{color:var(--danger)}
-.grid .d{position:relative}
-.grid .d .hn{position:absolute;left:2px;right:2px;bottom:5px;text-align:center;font-size:9px;font-size:max(9px,.9vw);line-height:1.2;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .grid .d.today{background:var(--today);color:#fff}
 .grid .d.sel:not(.today){outline:0;box-shadow:inset 0 0 0 2px var(--accent)}
 #calInfo{margin-top:10px;font-size:15px;display:flex;flex-direction:column}
@@ -208,58 +205,6 @@ const memos = store.get("memos", {});
 const key = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 const DOW = ["日", "月", "火", "水", "木", "金", "土"];
 
-/* ---- Japanese public holidays: computed locally (1980-2099), so it works offline ---- */
-const holidayCache = {};
-function nthMonday(y, m, n) { return 1 + ((1 - new Date(y, m, 1).getDay() + 7) % 7) + (n - 1) * 7; }
-function holidaysOf(y) {
-  if (holidayCache[y]) return holidayCache[y];
-  const h = {};
-  holidayCache[y] = h;
-  if (y < 1980 || y > 2099) return h;
-  const add = (m, d, name) => { h[y + "-" + pad(m) + "-" + pad(d)] = name; };
-  const ex = y - 1980, leap = Math.floor(ex / 4);
-  add(1, 1, "元日");
-  add(1, y >= 2000 ? nthMonday(y, 0, 2) : 15, "成人の日");
-  add(2, 11, "建国記念の日");
-  if (y >= 2020) add(2, 23, "天皇誕生日");
-  add(3, Math.floor(20.8431 + 0.242194 * ex - leap), "春分の日");
-  add(4, 29, y >= 2007 ? "昭和の日" : y >= 1989 ? "みどりの日" : "天皇誕生日");
-  add(5, 3, "憲法記念日");
-  if (y >= 2007) add(5, 4, "みどりの日");
-  add(5, 5, "こどもの日");
-  if (y === 2020) add(7, 23, "海の日"); else if (y === 2021) add(7, 22, "海の日");
-  else if (y >= 2003) add(7, nthMonday(y, 6, 3), "海の日"); else if (y >= 1996) add(7, 20, "海の日");
-  if (y === 2020) add(8, 10, "山の日"); else if (y === 2021) add(8, 8, "山の日"); else if (y >= 2016) add(8, 11, "山の日");
-  add(9, y >= 2003 ? nthMonday(y, 8, 3) : 15, "敬老の日");
-  add(9, Math.floor(23.2488 + 0.242194 * ex - leap), "秋分の日");
-  if (y === 2020) add(7, 24, "スポーツの日"); else if (y === 2021) add(7, 23, "スポーツの日");
-  else if (y >= 2022) add(10, nthMonday(y, 9, 2), "スポーツの日");
-  else if (y >= 2000) add(10, nthMonday(y, 9, 2), "体育の日"); else add(10, 10, "体育の日");
-  add(11, 3, "文化の日");
-  add(11, 23, "勤労感謝の日");
-  if (y >= 1989 && y <= 2018) add(12, 23, "天皇誕生日");
-  if (y === 1989) add(2, 24, "大喪の礼");
-  if (y === 1990) add(11, 12, "即位礼正殿の儀");
-  if (y === 1993) add(6, 9, "結婚の儀");
-  if (y === 2019) { add(5, 1, "天皇の即位の日"); add(10, 22, "即位礼正殿の儀"); }
-  const sorted = () => Object.keys(h).sort();
-  // 国民の休日: a non-Sunday day sandwiched between two holidays
-  sorted().forEach(k => {
-    const d = new Date(y, +k.slice(5, 7) - 1, +k.slice(8) + 1), n = new Date(y, d.getMonth(), d.getDate() + 1);
-    if (!h[key(d)] && h[key(n)] && d.getDay() !== 0 && d.getFullYear() === y) h[key(d)] = "国民の休日";
-  });
-  // 振替休日: a holiday on Sunday moves to the next day that is not a holiday
-  sorted().forEach(k => {
-    const d = new Date(y, +k.slice(5, 7) - 1, +k.slice(8));
-    if (d.getDay() !== 0 || h[k] === "振替休日") return;
-    const n = new Date(y, d.getMonth(), d.getDate() + 1);
-    while (h[key(n)]) n.setDate(n.getDate() + 1);
-    if (n.getFullYear() === y) h[key(n)] = "振替休日";
-  });
-  return h;
-}
-const holidayName = d => holidaysOf(d.getFullYear())[key(d)] || "";
-
 function drawCal() {
   $("#calYear").value = view.getFullYear();
   $("#calMonth").value = view.getMonth();
@@ -269,13 +214,12 @@ function drawCal() {
   for (let i = 0; i < 42; i++) {
     const d = new Date(start); d.setDate(start.getDate() + i);
     const b = document.createElement("button");
-    const hn = holidayName(d);
-    b.className = "d" + (d.getMonth() !== view.getMonth() ? " other" : "") + (d.getDay() == 0 ? " sun" : d.getDay() == 6 ? " sat" : "") + (hn ? " hol" : "") + (key(d) === today ? " today" : "") + (key(d) === key(sel) ? " sel" : "");
-    b.innerHTML = "<span>" + d.getDate() + (memos[key(d)] ? "•" : "") + "</span>" + (hn ? '<span class="hn">' + hn + "</span>" : "");
+    b.className = "d" + (d.getMonth() !== view.getMonth() ? " other" : "") + (d.getDay() == 0 ? " sun" : d.getDay() == 6 ? " sat" : "") + (key(d) === today ? " today" : "") + (key(d) === key(sel) ? " sel" : "");
+    b.textContent = d.getDate() + (memos[key(d)] ? "•" : "");
     b.onclick = () => { sel = d; if (d.getMonth() !== view.getMonth()) view = new Date(d.getFullYear(), d.getMonth(), 1); drawCal(); };
     g.appendChild(b);
   }
-  $("#selLabel").textContent = `${sel.getFullYear()}年${sel.getMonth() + 1}月${sel.getDate()}日(${DOW[sel.getDay()]})${holidayName(sel) ? " " + holidayName(sel) : ""}`;
+  $("#selLabel").textContent = `${sel.getFullYear()}年${sel.getMonth() + 1}月${sel.getDate()}日(${DOW[sel.getDay()]})`;
   $("#memo").value = memos[key(sel)] || "";
 }
 $("#calYear").innerHTML = Array.from({ length: 201 }, (_, i) => `<option value="${1900 + i}">${1900 + i}</option>`).join("");
