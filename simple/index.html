@@ -14,8 +14,8 @@
 <link rel="icon" type="image/png" href="icons/icon-192.png">
 <title>Time Hub Lite</title>
 <style>
-:root{--bg:#f4f5f7;--card:#fff;--fg:#1c1e21;--sub:#6b7280;--accent:#3b6cf6;--accent-fg:#fff;--line:#e5e7eb;--danger:#e5484d;--today:#3b6cf6}
-@media (prefers-color-scheme:dark){:root{--bg:#0f1115;--card:#1a1d24;--fg:#eceef2;--sub:#9aa1ad;--line:#2a2e38;--accent:#6c8cff}}
+:root{--bg:#f4f5f7;--card:#fff;--fg:#1c1e21;--sub:#6b7280;--accent:#3b6cf6;--accent-fg:#fff;--line:#e5e7eb;--danger:#e5484d;--today:#3b6cf6;--danger-text:#c62828;--clock-sub:#4b5563;color-scheme:light dark}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1115;--card:#1a1d24;--fg:#eceef2;--sub:#9aa1ad;--line:#2a2e38;--accent:#6c8cff;--danger-text:#ff6b70;--clock-sub:#c4c9d4}}
 *{box-sizing:border-box}
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Segoe UI",sans-serif;padding:12px;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation;-webkit-text-size-adjust:100%}
@@ -44,7 +44,7 @@ button.btn.danger{background:var(--danger)}
 /* clock */
 .clock-body{min-width:0;flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
 #clockTime{white-space:nowrap;font-size:15vw;font-size:clamp(72px,15vw,190px);line-height:1.1}
-#clockDate{font-size:2.2vw;font-size:clamp(16px,2.2vw,26px);margin-top:6px}
+#clockDate{font-size:2.2vw;font-size:clamp(16px,2.2vw,26px);margin-top:6px;color:var(--clock-sub)}
 select{background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-family:inherit}
 /* calendar */
 .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
@@ -55,9 +55,9 @@ select{background:var(--bg);color:var(--fg);border:1px solid var(--line);border-
 .grid .dow{font-size:15px;color:var(--sub);padding:4px 0}
 .grid .d{min-width:0;width:100%;margin:0;padding:0;box-sizing:border-box;-webkit-appearance:none;appearance:none;min-height:0;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;cursor:pointer;border:0;background:none;color:var(--fg);font-family:inherit}
 .grid .d.other{color:var(--sub);opacity:.4}
-.grid .d.sun{color:var(--danger)}
+.grid .d.sun{color:var(--danger-text)}
 .grid .d.sat{color:var(--accent)}
-.grid .d.hol{color:var(--danger)}
+.grid .d.hol{color:var(--danger-text)}
 .grid .d{position:relative}
 .grid .d .hn{position:absolute;left:2px;right:2px;bottom:5px;text-align:center;font-size:9px;font-size:max(9px,.9vw);line-height:1.2;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .grid .d.today{background:var(--today);color:#fff}
@@ -65,7 +65,7 @@ select{background:var(--bg);color:var(--fg);border:1px solid var(--line);border-
 #calInfo{margin-top:10px;font-size:15px;display:flex;flex-direction:column}
 #calInfo>*+*{margin-top:6px}
 #calInfo .sub{text-align:left;font-weight:600}
-textarea{height:84px;resize:none;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:8px;font-family:inherit;resize:vertical}
+textarea{height:84px;resize:none;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:8px;font-family:inherit}
 /* timer */
 .setter{display:flex;justify-content:center;align-items:flex-end;margin:4px 0;transition:opacity .2s}
 .setter.locked{opacity:.4;pointer-events:none}
@@ -79,7 +79,8 @@ textarea{height:84px;resize:none;font-size:15px;background:var(--bg);color:var(-
 .wi{height:34px;line-height:34px;text-align:center;scroll-snap-align:center;scroll-snap-stop:always;font-size:18px;color:var(--sub);font-variant-numeric:tabular-nums;cursor:pointer}
 .wedit{position:absolute;left:0;top:34px;width:100%;height:34px;padding:0;box-sizing:border-box;text-align:center;font-size:22px;font-weight:600;font-family:inherit;background:var(--card);color:var(--fg);border:2px solid var(--accent);border-radius:10px;outline:none;-webkit-user-select:text;user-select:text}
 .wi.sel{color:var(--fg);font-weight:600;font-size:22px}
-.presets{display:flex;justify-content:center;margin-top:6px;flex-wrap:wrap}
+.presets{display:flex;justify-content:center;margin-top:6px;flex-wrap:wrap;transition:opacity .2s}
+.presets.locked{opacity:.4;pointer-events:none}
 .presets button{margin:3px}
 .presets button{border:1px solid var(--line);background:none;color:var(--fg);border-radius:999px;padding:3px 12px;cursor:pointer;font-family:inherit;font-size:13px}
 progress{width:100%;height:5px;margin-top:8px;accent-color:var(--accent)}
@@ -176,17 +177,19 @@ $("#tz").innerHTML = zones.map(z => `<option value="${z}">${z === "local" ? "ロ
 $("#tz").value = store.get("tz", "local");
 $("#tz").onchange = () => { store.set("tz", $("#tz").value); drawClock(); };
 
+const OPTS = { hour12: false, year: "numeric", month: "numeric", day: "numeric", weekday: "short", hour: "numeric", minute: "numeric", second: "numeric" };
+const clockFmt = {};
 function zoned(tz) {
-  const opts = { hour12: false, year: "numeric", month: "numeric", day: "numeric", weekday: "short", hour: "numeric", minute: "numeric", second: "numeric" };
-  if (tz !== "local") opts.timeZone = tz;
+  const f = clockFmt[tz] || (clockFmt[tz] = new Intl.DateTimeFormat("ja-JP", tz === "local" ? OPTS : Object.assign({ timeZone: tz }, OPTS)));
   const p = {};
-  new Intl.DateTimeFormat("ja-JP", opts).formatToParts(new Date()).forEach(x => { p[x.type] = x.value; });
+  f.formatToParts(new Date()).forEach(x => { p[x.type] = x.value; });
   return { h: (+p.hour) % 24, m: +p.minute, s: +p.second, label: `${p.year}年${p.month}月${p.day}日(${p.weekday})` };
 }
+let lastT = "", lastD = "";
 function drawClock() {
-  const t = zoned($("#tz").value);
-  $("#clockTime").textContent = `${pad(t.h)}:${pad(t.m)}`;
-  $("#clockDate").textContent = t.label;
+  const t = zoned($("#tz").value), s = pad(t.h) + ":" + pad(t.m);
+  if (s !== lastT) { lastT = s; $("#clockTime").textContent = s; }
+  if (t.label !== lastD) { lastD = t.label; $("#clockDate").textContent = t.label; }
 }
 setInterval(drawClock, 250); drawClock();
 
@@ -253,7 +256,7 @@ const holidayName = d => holidaysOf(d.getFullYear())[key(d)] || "";
 function drawCal() {
   $("#calYear").value = view.getFullYear();
   $("#calMonth").value = view.getMonth();
-  const g = $("#calGrid"); g.innerHTML = DOW.map((d, i) => `<div class="dow" style="color:${i == 0 ? "var(--danger)" : i == 6 ? "var(--accent)" : ""}">${d}</div>`).join("");
+  const g = $("#calGrid"); g.innerHTML = DOW.map((d, i) => `<div class="dow" style="color:${i == 0 ? "var(--danger-text)" : i == 6 ? "var(--accent)" : ""}">${d}</div>`).join("");
   const start = new Date(view); start.setDate(1 - view.getDay());
   const today = key(new Date());
   for (let i = 0; i < 42; i++) {
@@ -346,6 +349,7 @@ function writeSetter(ms) { const s = Math.round(ms / 1000); $("#th").set(Math.mi
 writeSetter(300000);
 function showTimer() {
   $("#setter").classList.toggle("locked", tRun);
+  $(".presets").classList.toggle("locked", tRun);
   $("#timerDisplay").textContent = fmtHMS(tLeft);
   $("#prog").value = tTotal ? 1 - tLeft / tTotal : 0;
   document.title = tRun ? `${fmtHMS(tLeft)} - Time Hub Lite` : "Time Hub Lite";
@@ -388,7 +392,7 @@ $("#tStart").onclick = () => {
 };
 $("#tReset").onclick = () => { tRun = false; cancelAnimationFrame(tRaf); setDone(false); tTotal = tLeft = readSetter(); $("#tStart").textContent = "スタート"; showTimer(); };
 ["#th", "#tm", "#ts"].forEach(s => $(s).oninput = () => { if (!tRun) { tTotal = tLeft = readSetter(); $("#tStart").textContent = "スタート"; showTimer(); } });
-document.querySelectorAll(".presets button").forEach(b => b.onclick = () => { writeSetter(b.dataset.s * 1000); $("#tReset").click(); });
+document.querySelectorAll(".presets button").forEach(b => b.onclick = () => { if (tRun) return; writeSetter(b.dataset.s * 1000); $("#tReset").click(); });
 showTimer();
 
 /* ---- keep screen on (time display) + offline support ---- */

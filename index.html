@@ -14,14 +14,14 @@
 <link rel="icon" type="image/png" href="icons/icon-192.png">
 <title>Time Hub</title>
 <style>
-:root{--bg:#f4f5f7;--card:#fff;--fg:#1c1e21;--sub:#6b7280;--accent:#3b6cf6;--accent-fg:#fff;--line:#e5e7eb;--danger:#e5484d;--today:#3b6cf6}
-@media (prefers-color-scheme:dark){:root{--bg:#0f1115;--card:#1a1d24;--fg:#eceef2;--sub:#9aa1ad;--line:#2a2e38;--accent:#6c8cff}}
+:root{--bg:#f4f5f7;--card:#fff;--fg:#1c1e21;--sub:#6b7280;--accent:#3b6cf6;--accent-fg:#fff;--line:#e5e7eb;--danger:#e5484d;--today:#3b6cf6;--danger-text:#c62828;--good-text:#1b7f45;--clock-sub:#4b5563;color-scheme:light dark}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1115;--card:#1a1d24;--fg:#eceef2;--sub:#9aa1ad;--line:#2a2e38;--accent:#6c8cff;--danger-text:#ff6b70;--good-text:#3dbb78;--clock-sub:#c4c9d4}}
 *{box-sizing:border-box}
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Segoe UI",sans-serif;padding:12px;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation;-webkit-text-size-adjust:100%}
 textarea,input{-webkit-user-select:text;user-select:text}
 /* iPad Air (4th gen) landscape = 1180x820 pt: left column = clock (top) + timer/stopwatch (bottom), right half = calendar */
-.app{height:100%;width:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.app{height:100%;width:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,.9fr) minmax(0,1.1fr);gap:12px}
 #clock{grid-column:1;grid-row:1}
 #calendar{grid-column:2;grid-row:1/3}
 .tools{grid-column:1;grid-row:2;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;min-height:0;min-width:0}
@@ -43,8 +43,9 @@ button.btn.danger{background:var(--danger)}
 .row>*{margin:4px 6px}
 /* clock */
 .clock-body{min-width:0;flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
-#clockTime{white-space:nowrap;font-size:8vw;font-size:clamp(48px,9vw,112px);line-height:1.1}
-#clockDate{font-size:2.2vw;font-size:clamp(16px,2.2vw,26px);margin-top:6px}
+#clockTime{white-space:nowrap;font-size:11vw;font-size:clamp(56px,11vw,132px);line-height:.9;font-weight:400}
+#clockSec{font-size:.5em;margin-left:.2em;color:var(--sub)}
+#clockDate{font-size:2.6vw;font-size:clamp(18px,2.6vw,30px);line-height:1.15;margin-top:4px;color:var(--clock-sub)}
 select{background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-family:inherit}
 /* calendar */
 .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
@@ -55,9 +56,9 @@ select{background:var(--bg);color:var(--fg);border:1px solid var(--line);border-
 .grid .dow{font-size:15px;color:var(--sub);padding:4px 0}
 .grid .d{min-width:0;width:100%;margin:0;padding:0;box-sizing:border-box;-webkit-appearance:none;appearance:none;min-height:0;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;cursor:pointer;border:0;background:none;color:var(--fg);font-family:inherit}
 .grid .d.other{color:var(--sub);opacity:.4}
-.grid .d.sun{color:var(--danger)}
+.grid .d.sun{color:var(--danger-text)}
 .grid .d.sat{color:var(--accent)}
-.grid .d.hol{color:var(--danger)}
+.grid .d.hol{color:var(--danger-text)}
 .grid .d{position:relative}
 .grid .d .hn{position:absolute;left:2px;right:2px;bottom:5px;text-align:center;font-size:9px;font-size:max(9px,.9vw);line-height:1.2;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .grid .d.today{background:var(--today);color:#fff}
@@ -65,7 +66,7 @@ select{background:var(--bg);color:var(--fg);border:1px solid var(--line);border-
 #calInfo{margin-top:10px;font-size:15px;display:flex;flex-direction:column}
 #calInfo>*+*{margin-top:6px}
 #calInfo .sub{text-align:left;font-weight:600}
-textarea{height:84px;resize:none;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:8px;font-family:inherit;resize:vertical}
+textarea{height:84px;resize:none;font-size:15px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:8px;font-family:inherit}
 /* timer */
 .setter{display:flex;justify-content:center;align-items:flex-end;margin:4px 0;transition:opacity .2s}
 .setter.locked{opacity:.4;pointer-events:none}
@@ -79,7 +80,8 @@ textarea{height:84px;resize:none;font-size:15px;background:var(--bg);color:var(-
 .wi{height:34px;line-height:34px;text-align:center;scroll-snap-align:center;scroll-snap-stop:always;font-size:18px;color:var(--sub);font-variant-numeric:tabular-nums;cursor:pointer}
 .wedit{position:absolute;left:0;top:34px;width:100%;height:34px;padding:0;box-sizing:border-box;text-align:center;font-size:22px;font-weight:600;font-family:inherit;background:var(--card);color:var(--fg);border:2px solid var(--accent);border-radius:10px;outline:none;-webkit-user-select:text;user-select:text}
 .wi.sel{color:var(--fg);font-weight:600;font-size:22px}
-.presets{display:flex;justify-content:center;margin-top:6px;flex-wrap:wrap}
+.presets{display:flex;justify-content:center;margin-top:6px;flex-wrap:wrap;transition:opacity .2s}
+.presets.locked{opacity:.4;pointer-events:none}
 .presets button{margin:3px}
 .presets button{border:1px solid var(--line);background:none;color:var(--fg);border-radius:999px;padding:3px 12px;cursor:pointer;font-family:inherit;font-size:13px}
 progress{width:100%;height:5px;margin-top:8px;accent-color:var(--accent)}
@@ -88,6 +90,7 @@ progress::-webkit-progress-bar{background:var(--line);border-radius:3px}
 progress::-webkit-progress-value{background:var(--accent);border-radius:3px}
 progress::-moz-progress-bar{background:var(--accent)}
 #timerDisplay,#swDisplay{font-size:4.4vw;font-size:clamp(26px,4.4vw,50px)}
+#swDisplay.long{font-size:3vw;font-size:clamp(20px,3.1vw,38px)}
 .tools .wwrap{width:52px}
 .tools .row{flex-wrap:nowrap}
 .tools .row{margin-top:6px}
@@ -107,7 +110,7 @@ section .row{margin-top:10px}
 section .btn{padding:8px 20px;font-size:14px}
 .laps{list-style:none;padding:0;margin:8px 0 0;flex:1;min-height:0;overflow:auto;font-variant-numeric:tabular-nums}
 .laps li{display:flex;justify-content:space-between;padding:4px 4px;border-top:1px solid var(--line);font-size:13px}
-.laps li.best{color:#2f9e5f}.laps li.worst{color:var(--danger)}
+.laps li.best{color:var(--good-text)}.laps li.worst{color:var(--danger-text)}
 #timerDone{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;font-size:7vw;font-size:clamp(40px,7vw,84px);font-weight:700;color:var(--danger);animation:blink .7s steps(1) infinite}
 #timerDone[hidden]{display:none}
 #timerDone{pointer-events:none;overflow:hidden}
@@ -121,7 +124,7 @@ section .btn{padding:8px 20px;font-size:14px}
   <section id="clock">
     <h3>時計</h3>
     <div class="clock-body">
-      <div id="clockTime" class="big">--:--:--</div>
+      <div id="clockTime" class="big"><span id="clockHM">--:--</span><span id="clockSec">--</span></div>
       <div id="clockDate" class="sub"></div>
       <div class="row"><select id="tz"></select></div>
     </div>
@@ -189,17 +192,20 @@ $("#tz").innerHTML = zones.map(z => `<option value="${z}">${z === "local" ? "ロ
 $("#tz").value = store.get("tz", "local");
 $("#tz").onchange = () => { store.set("tz", $("#tz").value); drawClock(); };
 
+const OPTS = { hour12: false, year: "numeric", month: "numeric", day: "numeric", weekday: "short", hour: "numeric", minute: "numeric", second: "numeric" };
+const clockFmt = {};
 function zoned(tz) {
-  const opts = { hour12: false, year: "numeric", month: "numeric", day: "numeric", weekday: "short", hour: "numeric", minute: "numeric", second: "numeric" };
-  if (tz !== "local") opts.timeZone = tz;
+  const f = clockFmt[tz] || (clockFmt[tz] = new Intl.DateTimeFormat("ja-JP", tz === "local" ? OPTS : Object.assign({ timeZone: tz }, OPTS)));
   const p = {};
-  new Intl.DateTimeFormat("ja-JP", opts).formatToParts(new Date()).forEach(x => { p[x.type] = x.value; });
+  f.formatToParts(new Date()).forEach(x => { p[x.type] = x.value; });
   return { h: (+p.hour) % 24, m: +p.minute, s: +p.second, label: `${p.year}年${p.month}月${p.day}日(${p.weekday})` };
 }
+let cHM = "", cSec = "", cDate = "";
 function drawClock() {
-  const t = zoned($("#tz").value);
-  $("#clockTime").textContent = `${pad(t.h)}:${pad(t.m)}:${pad(t.s)}`;
-  $("#clockDate").textContent = t.label;
+  const t = zoned($("#tz").value), hm = pad(t.h) + ":" + pad(t.m), sc = pad(t.s);
+  if (hm !== cHM) { cHM = hm; $("#clockHM").textContent = hm; }
+  if (sc !== cSec) { cSec = sc; $("#clockSec").textContent = sc; }
+  if (t.label !== cDate) { cDate = t.label; $("#clockDate").textContent = t.label; }
 }
 setInterval(drawClock, 250); drawClock();
 
@@ -266,7 +272,7 @@ const holidayName = d => holidaysOf(d.getFullYear())[key(d)] || "";
 function drawCal() {
   $("#calYear").value = view.getFullYear();
   $("#calMonth").value = view.getMonth();
-  const g = $("#calGrid"); g.innerHTML = DOW.map((d, i) => `<div class="dow" style="color:${i == 0 ? "var(--danger)" : i == 6 ? "var(--accent)" : ""}">${d}</div>`).join("");
+  const g = $("#calGrid"); g.innerHTML = DOW.map((d, i) => `<div class="dow" style="color:${i == 0 ? "var(--danger-text)" : i == 6 ? "var(--accent)" : ""}">${d}</div>`).join("");
   const start = new Date(view); start.setDate(1 - view.getDay());
   const today = key(new Date());
   for (let i = 0; i < 42; i++) {
@@ -359,6 +365,7 @@ function writeSetter(ms) { const s = Math.round(ms / 1000); $("#th").set(Math.mi
 writeSetter(300000);
 function showTimer() {
   $("#setter").classList.toggle("locked", tRun);
+  $(".presets").classList.toggle("locked", tRun);
   $("#timerDisplay").textContent = fmtHMS(tLeft);
   $("#prog").value = tTotal ? 1 - tLeft / tTotal : 0;
   document.title = tRun ? `${fmtHMS(tLeft)} - Time Hub` : "Time Hub";
@@ -401,14 +408,14 @@ $("#tStart").onclick = () => {
 };
 $("#tReset").onclick = () => { tRun = false; cancelAnimationFrame(tRaf); setDone(false); tTotal = tLeft = readSetter(); $("#tStart").textContent = "スタート"; showTimer(); };
 ["#th", "#tm", "#ts"].forEach(s => $(s).oninput = () => { if (!tRun) { tTotal = tLeft = readSetter(); $("#tStart").textContent = "スタート"; showTimer(); } });
-document.querySelectorAll(".presets button").forEach(b => b.onclick = () => { writeSetter(b.dataset.s * 1000); $("#tReset").click(); });
+document.querySelectorAll(".presets button").forEach(b => b.onclick = () => { if (tRun) return; writeSetter(b.dataset.s * 1000); $("#tReset").click(); });
 showTimer();
 
 /* ---- stopwatch ---- */
 let swBase = 0, swStart = 0, swRun = false, swRaf = 0, laps = [], lastLap = 0;
 const fmtSW = ms => { const c = Math.floor(ms / 10), s = Math.floor(c / 100), m = Math.floor(s / 60); return (m >= 60 ? pad(Math.floor(m / 60)) + ":" : "") + `${pad(m % 60)}:${pad(s % 60)}.${pad(c % 100)}`; };
 const swElapsed = () => swBase + (swRun ? performance.now() - swStart : 0);
-function swTick() { $("#swDisplay").textContent = fmtSW(swElapsed()); if (swRun) swRaf = requestAnimationFrame(swTick); }
+function swTick() { const d = $("#swDisplay"), s = fmtSW(swElapsed()); d.textContent = s; d.classList.toggle("long", s.length > 8); if (swRun) swRaf = requestAnimationFrame(swTick); }
 function drawLaps() {
   const splits = laps.map(l => l.split), min = Math.min(...splits), max = Math.max(...splits);
   $("#laps").innerHTML = laps.slice().reverse().map(l => `<li class="${laps.length > 2 ? (l.split === min ? "best" : l.split === max ? "worst" : "") : ""}"><span>ラップ ${l.n}</span><span>${fmtSW(l.split)}</span><span>${fmtSW(l.total)}</span></li>`).join("");
